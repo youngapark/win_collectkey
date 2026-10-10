@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단축키 동물 구조대 - Ctrl & Shift 마스터 대작전</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tone.js for Sound Effects -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <!-- Canvas Confetti for Celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Jua & Gowun Dodum for kids-friendly aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .font-kids {
+      font-family: 'Jua', cursive;
+    }
+    .wiggle {
+      animation: wiggle 0.5s ease-in-out infinite alternate;
+    }
+    @keyframes wiggle {
+      0% { transform: rotate(-4deg); }
+      100% { transform: rotate(4deg); }
+    }
+    .pop-in {
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    /* Cut State Styling (Ghost Effect) */
+    .cut-ghost {
+      opacity: 0.35;
+      filter: grayscale(80%) drop-shadow(0 0 4px rgba(239, 68, 68, 0.5));
+      border-style: dashed !important;
+      animation: pulse 1s infinite;
+    }
+    /* Custom Key Press Shadow */
+    .key-press-shadow {
+      box-shadow: 0 4px 0 #94a3b8;
+      transition: all 0.08s ease;
+    }
+    .key-pressed {
+      transform: translateY(3px) !important;
+      box-shadow: 0 1px 0 #94a3b8 !important;
+      background-color: #fef08a !important; /* Yellow highlight */
+      border-color: #f59e0b !important;
+      color: #92400e !important;
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-amber-50 text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Compact Top Bar: Integrated Brand, Stage Switcher & Essential Controls -->
+  <header class="bg-white/95 backdrop-blur border-b-2 border-amber-200 px-3 py-1.5 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      
+      <!-- Compact Brand -->
+      <div class="flex items-center space-x-2">
+        <span class="text-xl">🐾</span>
+        <h1 class="text-base sm:text-lg font-kids text-amber-900 tracking-wide flex items-center gap-1.5">
+          단축키 동물 구조대!
+          <span class="text-[10px] font-sans bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold hidden sm:inline-block">Ctrl & Shift 실습</span>
+        </h1>
+      </div>
+
+      <!-- Compact Stage Selector Tabs -->
+      <div class="flex items-center gap-1 bg-amber-100/70 p-1 rounded-xl border border-amber-200 text-xs" id="stageTabsContainer">
+        <button onclick="switchStage(1)" id="btnStage1" class="px-2.5 py-1 rounded-lg font-kids transition-all bg-amber-500 text-white shadow-xs">
+          1단계: Shift 이동 🐰
+        </button>
+        <button onclick="switchStage(2)" id="btnStage2" class="px-2.5 py-1 rounded-lg font-kids transition-all bg-white text-slate-700 hover:bg-amber-50">
+          2단계: Ctrl 이동 🐱
+        </button>
+        <button onclick="switchStage(3)" id="btnStage3" class="px-2.5 py-1 rounded-lg font-kids transition-all bg-white text-slate-700 hover:bg-amber-50">
+          3단계: Shift 복사 🐥
+        </button>
+        <button onclick="switchStage(4)" id="btnStage4" class="px-2.5 py-1 rounded-lg font-kids transition-all bg-white text-slate-700 hover:bg-amber-50">
+          4단계: Ctrl 복사 🐼
+        </button>
+        <button onclick="switchStage(5)" id="btnStage5" class="px-2.5 py-1 rounded-lg font-kids transition-all bg-white text-slate-700 hover:bg-amber-50">
+          5단계: 콤보 실전 🐶
+        </button>
+      </div>
+
+      <!-- Controls (Sound & Reset) -->
+      <div class="flex items-center gap-1.5">
+        <button id="soundToggleBtn" onclick="toggleAudio()" class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-lg text-xs font-bold text-emerald-800 transition flex items-center gap-1">
+          <span>🔊</span> 소리
+        </button>
+        <button onclick="resetCurrentStage()" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 transition flex items-center gap-1">
+          <span>🔄</span> 다시
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="max-w-6xl w-full mx-auto px-3 py-2 flex-1 flex flex-col gap-2.5">
+    
+    <!-- HIGH-VISIBILITY MISSION BANNER (Prominently placed at top without scroll) -->
+    <section class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-xl px-3.5 py-2 text-white shadow-md flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-2xl shadow-inner border border-white/30 flex-shrink-0 animate-bounce">
+          🦉
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="bg-amber-300 text-amber-950 font-kids text-[11px] px-2 py-0.2 rounded-full uppercase">부엉이 선생님 미션</span>
+            <span id="levelBadge" class="text-[11px] bg-white/25 px-1.5 py-0.2 rounded font-semibold">1단계</span>
+            <span id="missionTypeBadge" class="text-[10px] bg-rose-400 text-white font-bold px-2 py-0.5 rounded-full">잘라내기(이동) 모드</span>
+            <span id="stageTipText" class="text-[11px] text-amber-200 font-medium hidden md:inline truncate">💡 Shift 키를 활용해 연속된 동물들을 한 번에 잡아보세요!</span>
+          </div>
+          <h2 id="missionTitle" class="text-sm sm:text-base md:text-lg font-kids text-amber-100 font-bold tracking-wide truncate mt-0.5">
+            줄지어 있는 토끼 4마리를 [Shift] 키로 한 번에 묶어보세요!
+          </h2>
+          <p id="missionDesc" class="text-xs text-blue-100 truncate hidden sm:block">
+            1️⃣ 첫 번째 토끼 클릭! 2️⃣ <strong>Shift</strong> 누른 채 마지막 토끼 클릭! 3️⃣ <strong>Ctrl+X</strong>로 잘라내고 보금자리 선택 후 <strong>Ctrl+V</strong>!
+          </p>
+        </div>
+      </div>
+
+      <!-- Live Compact Clipboard Indicator -->
+      <div class="bg-white/10 backdrop-blur border border-white/25 rounded-lg px-2.5 py-1 min-w-[145px] sm:min-w-[180px] flex items-center justify-between gap-2 flex-shrink-0">
+        <div class="text-left">
+          <div id="clipboardActionLabel" class="text-[9px] text-blue-200 font-bold uppercase">클립보드 (Ctrl+X / Ctrl+C)</div>
+          <div id="clipboardStatusText" class="text-[11px] font-bold text-amber-200 truncate">비어 있음</div>
+        </div>
+        <div id="clipboardIcons" class="flex items-center gap-1 min-h-[24px] bg-black/25 px-1.5 py-0.5 rounded">
+          <span class="text-slate-300 text-[10px] italic">텅~</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Dual Workspace: Zoo Field vs Destination Safe Houses -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 items-start">
+      
+      <!-- LEFT: Animal Field (Source Grid) -->
+      <section class="lg:col-span-7 bg-white rounded-2xl p-3 border-2 border-amber-200 shadow-sm flex flex-col min-h-[380px]">
+        
+        <!-- Field Header -->
+        <div class="flex items-center justify-between pb-2 border-b border-amber-100">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl">🌿</span>
+            <h3 class="font-kids text-base text-slate-800">어지러운 동물 숲속 들판</h3>
+          </div>
+          <div class="text-right flex items-center gap-1.5">
+            <span class="text-[11px] font-bold text-slate-400">선택됨:</span>
+            <span id="selectedCountBadge" class="text-xs font-kids bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full border border-blue-200">0 마리</span>
+          </div>
+        </div>
+
+        <!-- The Interactive Animal Grid Container -->
+        <div id="animalContainer" class="mt-2.5 flex-1 grid grid-cols-4 sm:grid-cols-5 gap-2.5 p-2 bg-amber-50/40 rounded-xl border-2 border-dashed border-amber-200 auto-rows-max items-center justify-items-center">
+          <!-- Animal items are dynamically rendered here -->
+        </div>
+
+        <!-- Action Helper Bar at bottom of Field -->
+        <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+          <div class="flex items-center gap-1">
+            <kbd class="px-1 py-0.2 bg-slate-100 border border-slate-300 rounded font-mono text-[9px]">Ctrl</kbd> + 
+            <kbd class="px-1 py-0.2 bg-slate-100 border border-slate-300 rounded font-mono text-[9px]">A</kbd> 전체 선택
+          </div>
+          <div class="text-slate-400 font-sans text-[10px]">
+            빈 곳을 누르면 선택이 해제됩니다.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Rescue Safe Houses (Destination Targets) -->
+      <section class="lg:col-span-5 flex flex-col gap-2.5">
+        
+        <!-- Target Destination Pen Header -->
+        <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl px-3 py-2 text-white shadow-sm flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏡</span>
+            <div>
+              <h3 class="font-kids text-sm sm:text-base leading-tight">안전한 보금자리</h3>
+              <p class="text-[10px] text-emerald-100">우리를 먼저 클릭 후 [Ctrl + V]!</p>
+            </div>
+          </div>
+          <!-- Target house focused pill -->
+          <div id="targetHouseActivePill" class="text-[11px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full shadow-xs border border-amber-300">
+            도착지 미선택 👆
+          </div>
+        </div>
+
+        <!-- Destination Pens (Houses) List -->
+        <div id="destinationPensList" class="flex flex-col gap-2 transition-all duration-200 rounded-xl">
+          <!-- Target House Cards generated dynamically -->
+        </div>
+
+        <!-- Cheat Sheet / Educational Guide Box for Kids -->
+        <div class="bg-white rounded-xl p-2.5 border border-indigo-200 shadow-xs">
+          <h4 class="font-kids text-indigo-900 text-xs flex items-center gap-1 mb-1.5">
+            <span>🎓</span> 윈도우 마법 공식 요약
+          </h4>
+          <div class="grid grid-cols-4 gap-1.5 text-[10px]">
+            <div class="bg-indigo-50/80 p-1.5 rounded-lg border border-indigo-100">
+              <span class="font-bold text-indigo-700 block">Shift</span>
+              <p class="text-slate-600 text-[9px] mt-0.5 leading-tight">연속된 것 몽땅 묶어서 선택!</p>
+            </div>
+            <div class="bg-amber-50/80 p-1.5 rounded-lg border border-amber-100">
+              <span class="font-bold text-amber-700 block">Ctrl</span>
+              <p class="text-slate-600 text-[9px] mt-0.5 leading-tight">떨어져 있는 것만 콕콕 선택!</p>
+            </div>
+            <div class="bg-rose-50/80 p-1.5 rounded-lg border border-rose-100">
+              <span class="font-bold text-rose-700 block">Ctrl+X</span>
+              <p class="text-slate-600 text-[9px] mt-0.5 leading-tight">잘라내기 (원래 자리는 사라져요)</p>
+            </div>
+            <div class="bg-sky-50/80 p-1.5 rounded-lg border border-sky-100">
+              <span class="font-bold text-sky-700 block">Ctrl+C</span>
+              <p class="text-slate-600 text-[9px] mt-0.5 leading-tight">복사하기 (원래 자리에 남아요!)</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Bottom Status Notification Toast Container -->
+  <div id="toastNotification" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 translate-y-3">
+    <div id="toastInner" class="bg-slate-900/90 backdrop-blur text-white px-5 py-2.5 rounded-2xl shadow-xl flex items-center gap-2.5 font-bold text-sm border border-slate-700">
+      <span id="toastIcon">✨</span>
+      <span id="toastMessage">안내 메시지</span>
+    </div>
+  </div>
+
+  <!-- Stage Clear Celebration Modal -->
+  <div id="clearModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border-4 border-amber-300 pop-in">
+      <div class="text-6xl mb-3 wiggle">🎉</div>
+      <h3 id="clearModalTitle" class="text-2xl font-kids text-amber-900">대단해요! 구조 성공!</h3>
+      <p id="clearModalDesc" class="text-sm text-slate-600 mt-2 font-medium">
+        Shift와 Ctrl의 비밀을 완벽하게 활용하셨네요! 다음 레벨로 도전해 볼까요?
+      </p>
+      
+      <!-- Stars rating -->
+      <div class="flex justify-center gap-2 my-4 text-3xl text-amber-400">
+        <span>⭐</span><span>⭐</span><span>⭐</span>
+      </div>
+
+      <div class="flex items-center justify-center gap-3 mt-6">
+        <button onclick="resetCurrentStage()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 rounded-xl font-kids text-slate-700 text-sm">
+          한 번 더 연습 🔁
+        </button>
+        <button id="modalNextBtn" onclick="nextStage()" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-kids rounded-xl text-base shadow-lg hover:shadow-xl">
+          다음 단계로 가기 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Audio engine using Tone.js synthesizers
+    let isSoundEnabled = true;
+    let synth = null;
+    let cheerSynth = null;
+
+    function initAudio() {
+      try {
+        if (!synth && window.Tone) {
+          synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "triangle" },
+            envelope: { attack: 0.02, decay: 0.1, sustain: 0.1, release: 0.3 }
+          }).toDestination();
+          synth.volume.value = -6;
+
+          cheerSynth = new Tone.Synth({
+            oscillator: { type: "sine" },
+            envelope: { attack: 0.05, decay: 0.2, sustain: 0.2, release: 0.8 }
+          }).toDestination();
+        }
+      } catch (e) {
+        console.warn("Audio init deferred:", e);
+      }
+    }
+
+    function playSound(type) {
+      if (!isSoundEnabled) return;
+      try {
+        if (Tone.context.state !== 'running') {
+          Tone.start();
+        }
+        initAudio();
+        if (!synth) return;
+
+        const now = Tone.now();
+        if (type === 'select') {
+          synth.triggerAttackRelease("C5", "16n", now);
+        } else if (type === 'shiftSelect') {
+          synth.triggerAttackRelease(["E5", "G5"], "16n", now);
+        } else if (type === 'ctrlSelect') {
+          synth.triggerAttackRelease(["D5", "A5"], "16n", now);
+        } else if (type === 'cut') {
+          synth.triggerAttackRelease(["G5", "C6"], "8n", now);
+        } else if (type === 'copy') {
+          synth.triggerAttackRelease(["D5", "F#5", "A5"], "12n", now);
+        } else if (type === 'paste') {
+          synth.triggerAttackRelease(["C5", "E5", "G5", "C6"], "8n", now);
+        } else if (type === 'error') {
+          synth.triggerAttackRelease(["C3", "Db3"], "8n", now);
+        } else if (type === 'win') {
+          if (cheerSynth) {
+            cheerSynth.triggerAttackRelease("C5", "8n", now);
+            cheerSynth.triggerAttackRelease("E5", "8n", now + 0.12);
+            cheerSynth.triggerAttackRelease("G5", "8n", now + 0.24);
+            cheerSynth.triggerAttackRelease("C6", "4n", now + 0.36);
+          }
+        }
+      } catch (err) {
+        // Fallback gracefully without crash
+      }
+    }
+
+    function toggleAudio() {
+      isSoundEnabled = !isSoundEnabled;
+      const btn = document.getElementById('soundToggleBtn');
+      if (isSoundEnabled) {
+        btn.innerHTML = '<span>🔊</span> 소리';
+        btn.className = 'px-2 py-1 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-lg text-xs font-bold text-emerald-800 transition flex items-center gap-1';
+        playSound('select');
+      } else {
+        btn.innerHTML = '<span>🔇</span> 끔';
+        btn.className = 'px-2 py-1 bg-slate-200 hover:bg-slate-300 border border-slate-300 rounded-lg text-xs font-bold text-slate-600 transition flex items-center gap-1';
+      }
+    }
+
+    // Animal definitions
+    const ANIMAL_TYPES = {
+      RABBIT: { id: 'rabbit', name: '아기 토끼', emoji: '🐰', bg: 'bg-pink-100', border: 'border-pink-300' },
+      CAT: { id: 'cat', name: '야옹이', emoji: '🐱', bg: 'bg-amber-100', border: 'border-amber-300' },
+      DOG: { id: 'dog', name: '댕댕이', emoji: '🐶', bg: 'bg-blue-100', border: 'border-blue-300' },
+      CHICK: { id: 'chick', name: '삐약이', emoji: '🐥', bg: 'bg-yellow-100', border: 'border-yellow-300' },
+      PANDA: { id: 'panda', name: '팬더', emoji: '🐼', bg: 'bg-emerald-100', border: 'border-emerald-300' }
+    };
+
+    // Stage configurations (Now featuring 5 stages including Copy & Paste)
+    const STAGES = {
+      1: {
+        number: 1,
+        mode: 'cut', // 'cut' | 'copy' | 'both'
+        title: "1단계: Shift로 연속 묶어 [잘라내기(이동)]",
+        missionTitle: "줄지어 있는 토끼 4마리를 [Shift]로 묶고 [Ctrl+X]로 잘라내어 옮겨주세요!",
+        missionDesc: "1️⃣ 첫 토끼 클릭 2️⃣ [Shift] 누른 채 마지막 토끼 클릭 3️⃣ [Ctrl+X] 잘라내기 4️⃣ 당근 동산 클릭 후 [Ctrl+V]!",
+        tip: "잘라내기(Ctrl+X)는 원래 있던 들판에서 동물이 쏙 사라지며 이동해요!",
+        targetSpecies: 'rabbit',
+        gridItems: [
+          { species: 'rabbit', name: '토끼1' },
+          { species: 'rabbit', name: '토끼2' },
+          { species: 'rabbit', name: '토끼3' },
+          { species: 'rabbit', name: '토끼4' },
+          { species: 'cat', name: '고양이' },
+          { species: 'dog', name: '강아지' },
+          { species: 'chick', name: '병아리' },
+          { species: 'panda', name: '팬더' }
+        ],
+        houses: [
+          { species: 'rabbit', name: '당근 토끼 동산', emoji: '🥕', requiredCount: 4, current: [] }
+        ]
+      },
+      2: {
+        number: 2,
+        mode: 'cut',
+        title: "2단계: Ctrl로 콕콕 골라 [잘라내기(이동)]",
+        missionTitle: "흩어져 있는 고양이 3마리를 [Ctrl]로 콕콕 찍고 [Ctrl+X]로 이사시켜 주세요!",
+        missionDesc: "1️⃣ [Ctrl] 누른 채 고양이만 콕콕 클릭 2️⃣ [Ctrl+X] 잘라내기 3️⃣ 캣타워 선택 후 [Ctrl+V] 붙여넣기!",
+        tip: "떨어진 개체는 Ctrl 키를 누르고 클릭해야 원하는 것만 쏙쏙 선택돼요!",
+        targetSpecies: 'cat',
+        gridItems: [
+          { species: 'cat', name: '고양이1' },
+          { species: 'dog', name: '강아지1' },
+          { species: 'rabbit', name: '토끼1' },
+          { species: 'cat', name: '고양이2' },
+          { species: 'chick', name: '병아리' },
+          { species: 'dog', name: '강아지2' },
+          { species: 'cat', name: '고양이3' },
+          { species: 'panda', name: '팬더' },
+          { species: 'rabbit', name: '토끼2' }
+        ],
+        houses: [
+          { species: 'cat', name: '따뜻한 캣타워', emoji: '🧶', requiredCount: 3, current: [] }
+        ]
+      },
+      3: {
+        number: 3,
+        mode: 'copy',
+        title: "3단계: Shift로 연속 묶어 [복사하기(Ctrl+C)]",
+        missionTitle: "나란히 선 병아리 3마리를 [Shift]로 묶고 [Ctrl+C]로 복사해서 둥지에 보내세요!",
+        missionDesc: "1️⃣ 첫 병아리 클릭 2️⃣ [Shift] 누르고 3번째 병아리 클릭 3️⃣ [Ctrl+C] 복사! 4️⃣ 둥지 선택 후 [Ctrl+V]!",
+        tip: "복사하기(Ctrl+C)는 원래 자리에 동물 친구들이 그대로 남아있고 복제돼요!",
+        targetSpecies: 'chick',
+        gridItems: [
+          { species: 'chick', name: '병아리1' },
+          { species: 'chick', name: '병아리2' },
+          { species: 'chick', name: '병아리3' },
+          { species: 'cat', name: '고양이' },
+          { species: 'dog', name: '강아지' },
+          { species: 'rabbit', name: '토끼' },
+          { species: 'panda', name: '팬더' }
+        ],
+        houses: [
+          { species: 'chick', name: '포근한 삐약이 둥지', emoji: '🌾', requiredCount: 3, current: [] }
+        ]
+      },
+      4: {
+        number: 4,
+        mode: 'copy',
+        title: "4단계: Ctrl로 멀리 있는 팬더 콕콕 [복사하기(Ctrl+C)]",
+        missionTitle: "멀리 떨어져 있는 팬더 2마리를 [Ctrl]로 선택한 후 [Ctrl+C]로 복사하세요!",
+        missionDesc: "1️⃣ [Ctrl] 누르고 팬더 2마리 클릭 2️⃣ [Ctrl+C] 복사하기 3️⃣ 대나무 숲 선택 후 [Ctrl+V] 붙여넣기!",
+        tip: "Ctrl 선택도 복사하기(Ctrl+C)와 완벽하게 함께 쓰일 수 있어요!",
+        targetSpecies: 'panda',
+        gridItems: [
+          { species: 'panda', name: '팬더1' },
+          { species: 'dog', name: '강아지' },
+          { species: 'rabbit', name: '토끼' },
+          { species: 'chick', name: '병아리' },
+          { species: 'cat', name: '고양이' },
+          { species: 'panda', name: '팬더2' },
+          { species: 'dog', name: '강아지2' }
+        ],
+        houses: [
+          { species: 'panda', name: '푸른 대나무 숲', emoji: '🎋', requiredCount: 2, current: [] }
+        ]
+      },
+      5: {
+        number: 5,
+        mode: 'both',
+        title: "5단계: Shift + Ctrl 콤보 마스터 (자유 선택)",
+        missionTitle: "줄 선 강아지 3마리(Shift) + 떨어진 강아지 1마리(Ctrl)를 모두 구조하세요!",
+        missionDesc: "연속된 3마리는 Shift로, 떨어진 1마리는 Ctrl로 함께 잡은 후 [Ctrl+X] 잘라내어 옮겨주세요!",
+        tip: "Shift로 먼저 묶고, 손을 떼지 않고 Ctrl을 눌러 추가하면 최고 난도 콤보 완성!",
+        targetSpecies: 'dog',
+        gridItems: [
+          { species: 'dog', name: '강아지1' },
+          { species: 'dog', name: '강아지2' },
+          { species: 'dog', name: '강아지3' },
+          { species: 'chick', name: '병아리1' },
+          { species: 'cat', name: '고양이' },
+          { species: 'panda', name: '팬더' },
+          { species: 'dog', name: '강아지4' },
+          { species: 'rabbit', name: '토끼' }
+        ],
+        houses: [
+          { species: 'dog', name: '넓은 댕댕이 공원', emoji: '🦴', requiredCount: 4, current: [] }
+        ]
+      }
+    };
+
+    let currentStageIndex = 1;
+    let fieldItems = []; // List of items currently in the animalContainer
+    let housesState = []; // Status of destination houses
+    let selectedItemIds = new Set(); // IDs of selected elements
+    let lastClickedIndex = null; // For range selection via Shift
+    let clipboardItems = []; // Items in cut or copy clipboard
+    let clipboardOperationType = null; // 'cut' or 'copy'
+    let activeHouseIndex = null; // Currently targeted house for paste
+    
+    // Key modifier tracking
+    const keyState = {
+      ctrl: false,
+      shift: false
+    };
+
+    // Keyboard event listeners for shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) return;
+
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const isCtrl = isMac ? e.metaKey : e.ctrlKey;
+
+      if (e.key === 'Control' || e.key === 'Meta') {
+        keyState.ctrl = true;
+      }
+      if (e.key === 'Shift') {
+        keyState.shift = true;
+      }
+
+      // Handle Ctrl + X (Cut)
+      if (isCtrl && (e.key === 'x' || e.key === 'X')) {
+        e.preventDefault();
+        triggerCutAction();
+      }
+
+      // Handle Ctrl + C (Copy)
+      if (isCtrl && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        triggerCopyAction();
+      }
+
+      // Handle Ctrl + V (Paste)
+      if (isCtrl && (e.key === 'v' || e.key === 'V')) {
+        e.preventDefault();
+        triggerPasteAction();
+      }
+
+      // Handle Ctrl + A (Select All)
+      if (isCtrl && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault();
+        selectAllFieldItems();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'Control' || e.key === 'Meta') {
+        keyState.ctrl = false;
+      }
+      if (e.key === 'Shift') {
+        keyState.shift = false;
+      }
+    });
+
+    window.addEventListener('blur', () => {
+      keyState.ctrl = false;
+      keyState.shift = false;
+    });
+
+    function switchStage(stageNum) {
+      currentStageIndex = stageNum;
+      
+      // Update top button styles (5 stages)
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById(`btnStage${i}`);
+        if (!btn) continue;
+        if (i === stageNum) {
+          btn.className = 'px-2.5 py-1 rounded-lg font-kids transition-all bg-amber-500 text-white shadow-xs scale-105';
+        } else {
+          btn.className = 'px-2.5 py-1 rounded-lg font-kids transition-all bg-white text-slate-700 hover:bg-amber-50';
+        }
+      }
+
+      const stage = STAGES[stageNum];
+      document.getElementById('levelBadge').textContent = `${stage.number}단계`;
+      
+      // Update Mode Badge (Cut vs Copy)
+      const modeBadge = document.getElementById('missionTypeBadge');
+      if (stage.mode === 'cut') {
+        modeBadge.textContent = '✂️ 잘라내기(이동) 미션';
+        modeBadge.className = 'text-[10px] bg-rose-500 text-white font-bold px-2 py-0.5 rounded-full';
+      } else if (stage.mode === 'copy') {
+        modeBadge.textContent = '📋 복사하기(복제) 미션';
+        modeBadge.className = 'text-[10px] bg-sky-500 text-white font-bold px-2 py-0.5 rounded-full';
+      } else {
+        modeBadge.textContent = '🌟 콤보 마스터 미션';
+        modeBadge.className = 'text-[10px] bg-purple-500 text-white font-bold px-2 py-0.5 rounded-full';
+      }
+
+      document.getElementById('missionTitle').textContent = stage.missionTitle;
+      document.getElementById('missionDesc').innerHTML = stage.missionDesc;
+      document.getElementById('stageTipText').textContent = stage.tip;
+
+      resetStageData(stageNum);
+    }
+
+    function resetCurrentStage() {
+      document.getElementById('clearModal').classList.add('hidden');
+      resetStageData(currentStageIndex);
+      showToast('스테이지를 다시 준비했어요!', '🔄');
+    }
+
+    function resetStageData(stageNum) {
+      const stage = STAGES[stageNum];
+      
+      // Clone grid items with unique IDs
+      fieldItems = stage.gridItems.map((item, index) => ({
+        ...item,
+        uniqueId: `animal_${stageNum}_${index}_${Math.random().toString(36).substr(2, 5)}`,
+        isCut: false
+      }));
+
+      housesState = JSON.parse(JSON.stringify(stage.houses));
+      selectedItemIds.clear();
+      lastClickedIndex = null;
+      clipboardItems = [];
+      clipboardOperationType = null;
+      activeHouseIndex = null;
+
+      updateClipboardHUD();
+      renderAnimalField();
+      renderHouses();
+      updateSelectedCountBadge();
+    }
+
+    function renderAnimalField() {
+      const container = document.getElementById('animalContainer');
+      container.innerHTML = '';
+
+      if (fieldItems.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400">
+            <div class="text-4xl mb-2">🎉</div>
+            <p class="font-kids text-base text-slate-600">들판의 모든 동물 친구들이 안전하게 이동했어요!</p>
+          </div>
+        `;
+        return;
+      }
+
+      fieldItems.forEach((item, index) => {
+        const spec = ANIMAL_TYPES[item.species.toUpperCase()] || { emoji: '🐾', bg: 'bg-slate-100', border: 'border-slate-300' };
+        const isSelected = selectedItemIds.has(item.uniqueId);
+        
+        const card = document.createElement('div');
+        card.setAttribute('data-id', item.uniqueId);
+        card.setAttribute('data-index', index);
+
+        let cardClasses = `
+          relative flex flex-col items-center justify-center p-3 rounded-2xl cursor-pointer
+          transition-all duration-150 transform hover:-translate-y-1 active:translate-y-0
+          w-full max-w-[96px] h-28 border-3 shadow-sm select-none
+        `;
+
+        if (item.isCut) {
+          cardClasses += ` cut-ghost border-rose-400 bg-rose-50`;
+        } else if (isSelected) {
+          cardClasses += ` bg-blue-100 border-4 border-blue-500 shadow-md ring-4 ring-blue-200/80 scale-105 z-10`;
+        } else {
+          cardClasses += ` ${spec.bg} ${spec.border} border-2 hover:border-amber-400 hover:shadow`;
+        }
+
+        card.className = cardClasses;
+
+        card.innerHTML = `
+          <div class="text-3xl sm:text-4xl filter drop-shadow transition-transform ${isSelected ? 'scale-110' : ''}">
+            ${spec.emoji}
+          </div>
+          <span class="text-[11px] font-kids text-slate-700 mt-1.5 truncate max-w-full">
+            ${item.name}
+          </span>
+          <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${isSelected ? 'bg-blue-600 text-white' : 'bg-white/80 border border-slate-300 text-transparent'}">
+            ✓
+          </span>
+          <span class="absolute bottom-1 left-2 text-[9px] text-slate-400 font-mono">
+            #${index + 1}
+          </span>
+        `;
+
+        card.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleAnimalClick(item.uniqueId, index, e);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('animalContainer').addEventListener('click', (e) => {
+      if (e.target.id === 'animalContainer') {
+        if (selectedItemIds.size > 0) {
+          selectedItemIds.clear();
+          lastClickedIndex = null;
+          renderAnimalField();
+          updateSelectedCountBadge();
+          playSound('select');
+          showToast('선택을 해제했어요.', '👆');
+        }
+      }
+    });
+
+    function handleAnimalClick(uniqueId, index, mouseEvent) {
+      const isShift = mouseEvent.shiftKey || keyState.shift;
+      const isCtrl = mouseEvent.ctrlKey || mouseEvent.metaKey || keyState.ctrl;
+
+      if (isShift) {
+        if (lastClickedIndex === null) {
+          selectedItemIds.clear();
+          selectedItemIds.add(uniqueId);
+          lastClickedIndex = index;
+        } else {
+          const start = Math.min(lastClickedIndex, index);
+          const end = Math.max(lastClickedIndex, index);
+          
+          selectedItemIds.clear();
+          for (let i = start; i <= end; i++) {
+            if (fieldItems[i]) {
+              selectedItemIds.add(fieldItems[i].uniqueId);
+            }
+          }
+        }
+        playSound('shiftSelect');
+        showToast(`[Shift]로 ${selectedItemIds.size}마리를 연속 묶음 선택했어요!`, '✨');
+
+      } else if (isCtrl) {
+        if (selectedItemIds.has(uniqueId)) {
+          selectedItemIds.delete(uniqueId);
+        } else {
+          selectedItemIds.add(uniqueId);
+        }
+        lastClickedIndex = index;
+        playSound('ctrlSelect');
+        showToast(`[Ctrl]로 콕콕! 현재 ${selectedItemIds.size}마리 선택 중`, '🎯');
+
+      } else {
+        selectedItemIds.clear();
+        selectedItemIds.add(uniqueId);
+        lastClickedIndex = index;
+        playSound('select');
+      }
+
+      renderAnimalField();
+      updateSelectedCountBadge();
+    }
+
+    function selectAllFieldItems() {
+      if (fieldItems.length === 0) return;
+      selectedItemIds.clear();
+      fieldItems.forEach(item => selectedItemIds.add(item.uniqueId));
+      lastClickedIndex = 0;
+      renderAnimalField();
+      updateSelectedCountBadge();
+      playSound('shiftSelect');
+      showToast('Ctrl + A 로 전체 선택했어요!', '🌟');
+    }
+
+    function updateSelectedCountBadge() {
+      const badge = document.getElementById('selectedCountBadge');
+      badge.textContent = `${selectedItemIds.size} 마리`;
+    }
+
+    // Cut Action (Ctrl + X)
+    function triggerCutAction() {
+      const currentStage = STAGES[currentStageIndex];
+      if (currentStage.mode === 'copy') {
+        playSound('error');
+        showToast('이번 단계는 [Ctrl + C] 복사하기 미션이에요! (원래 자리에 남겨두기)', '⚠️');
+        return;
+      }
+
+      if (selectedItemIds.size === 0) {
+        playSound('error');
+        showToast('먼저 옮길 동물들을 선택해 주세요!', '⚠️');
+        return;
+      }
+
+      clipboardOperationType = 'cut';
+      clipboardItems = fieldItems.filter(item => selectedItemIds.has(item.uniqueId));
+
+      // Mark items as cut (ghost state)
+      fieldItems.forEach(item => {
+        item.isCut = selectedItemIds.has(item.uniqueId);
+      });
+
+      playSound('cut');
+      updateClipboardHUD();
+      renderAnimalField();
+      renderHouses();
+      showToast(`✂️ [잘라내기] 완료! 오른쪽 보금자리를 클릭한 후 [Ctrl+V]를 누르세요!`, '🏡');
+    }
+
+    // Copy Action (Ctrl + C)
+    function triggerCopyAction() {
+      const currentStage = STAGES[currentStageIndex];
+      if (currentStage.mode === 'cut') {
+        playSound('error');
+        showToast('이번 단계는 [Ctrl + X] 잘라내기(이동) 미션이에요!', '⚠️');
+        return;
+      }
+
+      if (selectedItemIds.size === 0) {
+        playSound('error');
+        showToast('먼저 복사할 동물들을 선택해 주세요!', '⚠️');
+        return;
+      }
+
+      clipboardOperationType = 'copy';
+      // In copy mode, items are duplicated into clipboard, original field items remain untouched (no ghost state)
+      clipboardItems = fieldItems.filter(item => selectedItemIds.has(item.uniqueId)).map(item => ({
+        ...item,
+        uniqueId: `copied_${item.species}_${Math.random().toString(36).substr(2, 5)}`
+      }));
+
+      // Ensure no items have cut state
+      fieldItems.forEach(item => { item.isCut = false; });
+
+      playSound('copy');
+      updateClipboardHUD();
+      renderAnimalField();
+      renderHouses();
+      showToast(`📋 [복사하기] 완료! 원래 자리에 남겨둔 채 복제되었어요! 집을 찍고 [Ctrl+V]!`, '✨');
+    }
+
+    // Paste Action (Ctrl + V)
+    function triggerPasteAction() {
+      if (clipboardItems.length === 0) {
+        playSound('error');
+        showToast('클립보드가 비어 있어요! 먼저 동물을 선택하고 Ctrl+X 나 Ctrl+C를 누르세요.', '⚠️');
+        return;
+      }
+
+      // Must explicitly select a destination house first!
+      if (activeHouseIndex === null || !housesState[activeHouseIndex]) {
+        playSound('error');
+        showToast('⚠️ 잠깐! 동물을 보낼 오른쪽 보금자리(우리)를 먼저 클릭하세요!', '🏡');
+        
+        const pensContainer = document.getElementById('destinationPensList');
+        if (pensContainer) {
+          pensContainer.classList.add('ring-4', 'ring-amber-400', 'p-1', 'bg-amber-100/50');
+          setTimeout(() => {
+            pensContainer.classList.remove('ring-4', 'ring-amber-400', 'p-1', 'bg-amber-100/50');
+          }, 1000);
+        }
+        return;
+      }
+
+      const targetHouse = housesState[activeHouseIndex];
+      const isCorrectSpecies = clipboardItems.every(item => item.species === targetHouse.species);
+
+      if (!isCorrectSpecies) {
+        playSound('error');
+        showToast(`앗! 이 방은 [${targetHouse.name}]이에요! 다른 동물 친구가 섞여있어요.`, '❌');
+        return;
+      }
+
+      // Add to house
+      clipboardItems.forEach(item => {
+        targetHouse.current.push(item);
+      });
+
+      // If operation was 'cut', remove them from the original field
+      if (clipboardOperationType === 'cut') {
+        const cutIds = new Set(clipboardItems.map(item => item.uniqueId));
+        fieldItems = fieldItems.filter(item => !cutIds.has(item.uniqueId));
+      }
+
+      // Clear selection and clipboard after successful paste
+      selectedItemIds.clear();
+      clipboardItems = [];
+      clipboardOperationType = null;
+      lastClickedIndex = null;
+      activeHouseIndex = null;
+
+      playSound('paste');
+      showToast(`🎉 붙여넣기 성공! ${targetHouse.name}으로 안전하게 들어갔어요!`, '✨');
+      
+      updateClipboardHUD();
+      renderAnimalField();
+      renderHouses();
+      updateSelectedCountBadge();
+
+      checkStageCompletion();
+    }
+
+    function updateClipboardHUD() {
+      const text = document.getElementById('clipboardStatusText');
+      const icons = document.getElementById('clipboardIcons');
+      const label = document.getElementById('clipboardActionLabel');
+
+      if (clipboardItems.length === 0) {
+        label.textContent = '클립보드 상태';
+        text.textContent = '비어 있음';
+        text.className = 'text-xs font-bold text-amber-200';
+        icons.innerHTML = `<span class="text-slate-300 text-xs italic">텅~</span>`;
+      } else {
+        const typeBadge = clipboardOperationType === 'cut' ? '✂️ 잘라내기' : '📋 복사됨';
+        label.textContent = `클립보드 (${typeBadge})`;
+        text.textContent = `${clipboardItems.length}마리 대기 중 (Ctrl+V)`;
+        text.className = 'text-xs font-bold text-emerald-300';
+        
+        icons.innerHTML = clipboardItems.map(item => {
+          const spec = ANIMAL_TYPES[item.species.toUpperCase()] || { emoji: '🐾' };
+          return `<span class="text-base animate-bounce">${spec.emoji}</span>`;
+        }).join('');
+      }
+    }
+
+    function renderHouses() {
+      const container = document.getElementById('destinationPensList');
+      container.innerHTML = '';
+
+      const hasClipboard = clipboardItems.length > 0;
+
+      housesState.forEach((house, index) => {
+        const spec = ANIMAL_TYPES[house.species.toUpperCase()] || { emoji: '🐾' };
+        const isCurrentActive = (index === activeHouseIndex);
+        const isFull = house.current.length >= house.requiredCount;
+
+        const card = document.createElement('div');
+        card.onclick = () => {
+          activeHouseIndex = index;
+          renderHouses();
+          playSound('select');
+          showToast(`[${house.name}] 선택 완료! 이제 [Ctrl + V]로 쏙 넣어주세요.`, '🎯');
+        };
+
+        let cardStyle = 'p-3 rounded-2xl border-3 cursor-pointer transition-all duration-200 shadow-sm ';
+        if (isCurrentActive) {
+          cardStyle += 'bg-emerald-50 border-emerald-500 ring-4 ring-emerald-300 shadow-lg scale-[1.02] ';
+        } else if (hasClipboard) {
+          cardStyle += 'bg-white border-dashed border-amber-400 hover:border-emerald-400 hover:bg-emerald-50/50 animate-pulse ';
+        } else {
+          cardStyle += 'bg-white border-slate-200 hover:border-emerald-300 ';
+        }
+        card.className = cardStyle;
+
+        const progressPct = Math.min(100, Math.round((house.current.length / house.requiredCount) * 100));
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">${house.emoji}</span>
+              <div>
+                <h4 class="font-kids text-sm sm:text-base text-slate-800 flex items-center gap-2">
+                  ${house.name}
+                  ${isCurrentActive 
+                    ? '<span class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-sans font-bold animate-bounce">📍 목적지 선택됨 (Ctrl+V 대기)</span>' 
+                    : (hasClipboard ? '<span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-sans font-bold">클릭하여 선택</span>' : '')}
+                </h4>
+                <p class="text-[11px] text-slate-500">${spec.name} 전용 (${house.current.length} / ${house.requiredCount}마리)</p>
+              </div>
+            </div>
+            <div class="text-right font-kids text-xs ${isFull ? 'text-emerald-600 font-bold' : 'text-slate-500'}">
+              ${isFull ? '완료! ✨' : `${progressPct}%`}
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+            <div class="bg-gradient-to-r from-emerald-400 to-teal-500 h-2 rounded-full transition-all duration-500" style="width: ${progressPct}%"></div>
+          </div>
+
+          <!-- Animal slots -->
+          <div class="mt-2 flex items-center gap-1.5 flex-wrap min-h-[38px] bg-white/70 p-1.5 rounded-xl border border-dashed border-emerald-200">
+            ${house.current.length === 0 ? `
+              <span class="text-[11px] ${isCurrentActive ? 'text-emerald-700 font-bold' : 'text-slate-400'} font-sans pl-1">
+                ${isCurrentActive ? '👉 이제 [Ctrl + V]를 누르면 이 방으로 들어옵니다!' : '이 방으로 보내려면 클릭 후 [Ctrl + V]를 누르세요.'}
+              </span>
+            ` : ''}
+            ${house.current.map(item => `
+              <div class="px-1.5 py-0.5 bg-white border border-emerald-300 rounded-lg shadow-xs flex items-center gap-1 pop-in">
+                <span class="text-base">${spec.emoji}</span>
+                <span class="text-[10px] font-kids text-slate-700">${item.name}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      const targetPill = document.getElementById('targetHouseActivePill');
+      if (activeHouseIndex !== null && housesState[activeHouseIndex]) {
+        const activeHouse = housesState[activeHouseIndex];
+        targetPill.textContent = `도착지: ${activeHouse.name} 📍`;
+        targetPill.className = 'text-[11px] font-bold bg-white text-emerald-800 px-2 py-0.5 rounded-full shadow-xs border border-emerald-300 ring-1 ring-emerald-200';
+      } else {
+        targetPill.textContent = `도착지 미선택 👆`;
+        targetPill.className = 'text-[11px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full shadow-xs border border-amber-300 animate-pulse';
+      }
+    }
+
+    function checkStageCompletion() {
+      const allCompleted = housesState.every(h => h.current.length >= h.requiredCount);
+
+      if (allCompleted) {
+        playSound('win');
+        triggerConfetti();
+
+        const modal = document.getElementById('clearModal');
+        const modalTitle = document.getElementById('clearModalTitle');
+        const modalDesc = document.getElementById('clearModalDesc');
+        const nextBtn = document.getElementById('modalNextBtn');
+
+        if (currentStageIndex === 1) {
+          modalTitle.textContent = "🐰 1단계 클리어: Shift + 잘라내기 마스터!";
+          modalDesc.textContent = "연속된 친구들을 Shift로 한 번에 묶어 잘라내어 옮겼어요! 이제 떨어져 있는 친구들을 위한 Ctrl을 연습해 볼까요?";
+          nextBtn.textContent = "2단계 도전하기 🚀";
+        } else if (currentStageIndex === 2) {
+          modalTitle.textContent = "🐱 2단계 클리어: Ctrl + 잘라내기 마스터!";
+          modalDesc.textContent = "흩어진 고양이들을 Ctrl로 콕콕 집어 모두 옮겼어요! 이제 복사하기(Ctrl+C)의 신기한 마법을 배워봐요!";
+          nextBtn.textContent = "3단계 (복사하기) 도전 📋";
+        } else if (currentStageIndex === 3) {
+          modalTitle.textContent = "🐥 3단계 클리어: Shift + 복사하기 성공!";
+          modalDesc.textContent = "와! 들판에 병아리들이 그대로 남아있으면서 둥지로 복제되었어요! 복사하기(Ctrl+C)의 원리를 완벽히 이해했네요!";
+          nextBtn.textContent = "4단계 도전하기 🚀";
+        } else if (currentStageIndex === 4) {
+          modalTitle.textContent = "🐼 4단계 클리어: Ctrl + 복사하기 성공!";
+          modalDesc.textContent = "멀리 떨어진 팬더들도 Ctrl로 콕콕 골라서 복사할 수 있음을 멋지게 증명했어요!";
+          nextBtn.textContent = "5단계 (최종 콤보) 도전 🌟";
+        } else {
+          modalTitle.textContent = "👑 축하합니다! 단축키 대마왕 등극!";
+          modalDesc.textContent = "Shift, Ctrl 선택과 잘라내기(Ctrl+X), 복사하기(Ctrl+C), 붙여넣기(Ctrl+V)까지 모두 정복했어요!";
+          nextBtn.textContent = "처음부터 다시 연습하기 🔁";
+        }
+
+        setTimeout(() => {
+          modal.classList.remove('hidden');
+        }, 500);
+      }
+    }
+
+    function nextStage() {
+      document.getElementById('clearModal').classList.add('hidden');
+      if (currentStageIndex < 5) {
+        switchStage(currentStageIndex + 1);
+      } else {
+        switchStage(1);
+      }
+    }
+
+    function triggerConfetti() {
+      if (window.confetti) {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function showToast(message, icon = '💡') {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.textContent = message;
+      toastIcon.textContent = icon;
+
+      toast.classList.remove('opacity-0', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-3');
+      }, 2500);
+    }
+
+    window.addEventListener('load', () => {
+      switchStage(1);
+    });
+  </script>
+</body>
+</html>
